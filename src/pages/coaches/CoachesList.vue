@@ -41,7 +41,6 @@
                     backend: true,
                     career: true,
                 },
-                coaches: this.$store.getters['coaches/coaches'],
             }
         },
         computed: {
@@ -49,8 +48,8 @@
                 return this.$store.getters['coaches/isCoach'];
             },
             filteredCoaches() {
-                // const coaches = this.$store.getters['coaches/coaches'];
-                return this.coaches.filter(coach => {
+                const coaches = this.$store.getters['coaches/coaches'];
+                return coaches.filter(coach => {
                     if(this.activeFilters.frontend && coach.areas.includes('frontend')){
                         return true
                     }
@@ -72,13 +71,20 @@
                 this.activeFilters = updatedFilters;
             },
             getFireBaseData() {
+                this.$store.commit('coaches/resetCoachList');
                 onSnapshot(collection(db, 'find-coach-app'), (querySnapshot) => {
                     querySnapshot.forEach((doc) => {
-                        const result = {...doc.data(), id: doc.id}
-                        this.coaches.push(result);
+                        const result = {
+                            id: doc.id,
+                            first: doc.data().firstName,
+                            last: doc.data().lastName,
+                            rate: doc.data().hourlyRate,
+                            areas: doc.data().areas,
+                            desc: doc.data().description,
+                        }
+                        this.$store.dispatch('coaches/registerCoach', result);
                         console.log(result.id);
                         console.log(result,'result');
-                        console.log(this.coaches,'this.coaches')
                     });
                     // querySnapshot.forEach((doc) => {
                     //     const result = {

@@ -5,5 +5,9 @@ export default {
     registerCoach(state, payload) {
         state.coaches.push(payload);
         // addDoc(collection(db, 'find-coach-app'), payload);
+    },
+    resetCoachList(state) {
+        console.log('working')
+        state.coaches = [];
     }
 };
